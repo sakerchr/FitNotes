@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FitNotes.Core\FitNotes.Core.csproj" />
-    <ProjectReference Include="..\FitNotes\FitNotes.Core.csproj" />
   </ItemGroup>
 
 </Project>
