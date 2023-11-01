@@ -1,0 +1,15 @@
+<tr>
+    <td>@DateOnly.FromDateTime(TrainingLog.Date)</td>
+    <td>@TrainingLog.Exercise</td>
+    <td>@TrainingLog.MetricWeight</td>
+    <td>TODO</td>
+    <td>@TrainingLog.Reps</td>
+    <td>
+        <a href="exercise/@TrainingLog.Exercise">Exercise history</a>
+    </td>
+</tr>
+
+@code {
+    [Parameter]
+    public TrainingLog TrainingLog { get; set; }
+}

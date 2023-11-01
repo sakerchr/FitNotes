@@ -1,0 +1,18 @@
+@page "/exercise/{exerciseName}"
+@inject TrainingLogBackupService TrainingLogBackupService
+
+@if (TrainingLogBackup is null || ExerciseName is null)
+{
+    <span>No training logs to show yet...</span>
+}
+else
+{
+    <span>Found @TrainingLogBackup.TrainingLogs.Where(tl => tl.Exercise == ExerciseName).ToList().Count logs</span>
+}
+
+@code {
+    [Parameter]
+    public string? ExerciseName { get; set; }
+    [CascadingParameter]
+    public TrainingLogBackup? TrainingLogBackup { get; set; }
+}

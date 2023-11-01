@@ -1,0 +1,25 @@
+﻿@page "/"
+@inject ILogger<Index> Logger
+
+<PageTitle>FitNotes</PageTitle>
+
+<h1>FitNotes</h1>
+
+@if (TrainingLogBackup is null)
+{
+    <div>
+        This app allows you to view data from the Android FitNotes app in your browser.<br>
+        Latest training log backup is being downloaded.
+    </div>
+}
+else
+{
+    <CascadingValue Value="@TrainingLogBackup">
+        <TrainingLogTable />
+    </CascadingValue>
+}
+
+@code {
+    [CascadingParameter]
+    public TrainingLogBackup? TrainingLogBackup { get; set; }
+}

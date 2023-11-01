@@ -1,0 +1,33 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>FitNotes.Blazor</PageTitle>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <CascadingValue Value="@_trainingLogBackup">
+            <article class="content px-4">
+                @Body
+            </article>
+        </CascadingValue>
+    </main>
+</div>
+
+@code {
+    public TrainingLogBackup? _trainingLogBackup;
+    private bool _dataIsLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_dataIsLoaded)
+        {
+                var parsedFile = await BackupParser.ParseFitNotesBackupFile($"Data Source={Directory.GetCurrentDirectory()}/Data/backup.sqlite");
+                _trainingLogBackup = parsedFile;
+                _dataIsLoaded = true;
+        }
+    }
+
+}
