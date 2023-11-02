@@ -1,7 +1,9 @@
 ﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        <CascadingValue Value="@_trainingLogBackup">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </CascadingValue>
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>
@@ -10,3 +12,19 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    public TrainingLogBackup? _trainingLogBackup;
+    private bool _dataIsLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_dataIsLoaded)
+        {
+                var parsedFile = await BackupParser.ParseFitNotesBackupFile($"Data Source={Directory.GetCurrentDirectory()}/Data/backup.sqlite");
+                _trainingLogBackup = parsedFile;
+                _dataIsLoaded = true;
+        }
+    }
+
+}

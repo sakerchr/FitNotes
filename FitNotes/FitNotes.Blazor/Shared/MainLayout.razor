@@ -8,26 +8,8 @@
     </div>
 
     <main>
-        <CascadingValue Value="@_trainingLogBackup">
-            <article class="content px-4">
-                @Body
-            </article>
-        </CascadingValue>
+        <article class="content px-4">
+            @Body
+        </article>
     </main>
 </div>
-
-@code {
-    public TrainingLogBackup? _trainingLogBackup;
-    private bool _dataIsLoaded = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (!_dataIsLoaded)
-        {
-                var parsedFile = await BackupParser.ParseFitNotesBackupFile($"Data Source={Directory.GetCurrentDirectory()}/Data/backup.sqlite");
-                _trainingLogBackup = parsedFile;
-                _dataIsLoaded = true;
-        }
-    }
-
-}
