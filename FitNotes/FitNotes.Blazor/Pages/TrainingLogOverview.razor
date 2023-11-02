@@ -1,0 +1,17 @@
+@page "/overview"
+
+@if (TrainingLogBackup is null)
+{
+    <span>Loading overview...</span>
+}
+else
+{
+    <TrainingLogTable TrainingLogs="@TrainingLogBackup.TrainingLogs"/>
+}
+
+
+@code {
+
+    [CascadingParameter]
+    public TrainingLogBackup? TrainingLogBackup { get; set; }
+}

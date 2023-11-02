@@ -1,18 +1,37 @@
-@page "/exercise/{exerciseName}"
+@page "/exercise/{exerciseName?}"
 @inject TrainingLogBackupService TrainingLogBackupService
 
+<h1>FitNotes</h1>
+
+<select id="exercise" @bind="@_selectedExerciseName">
+    @foreach (var exercise in TrainingLogBackup.Exercises)
+    {
+        <option value="@exercise.ExerciseName">@exercise.ExerciseName</option>
+    }
+</select>
 @if (TrainingLogBackup is null || ExerciseName is null)
 {
-    <span>No training logs to show yet...</span>
+    <br />
+    <span>Select an exercise to see logs for that particular exercise</span>
 }
 else
 {
-    <span>Found @TrainingLogBackup.TrainingLogs.Where(tl => tl.Exercise == ExerciseName).ToList().Count logs</span>
+    <TrainingLogTable TrainingLogs="@TrainingLogBackup.TrainingLogs" Exercise="@_selectedExerciseName"/>
 }
 
 @code {
+    private string? _selectedExerciseName;
     [Parameter]
     public string? ExerciseName { get; set; }
     [CascadingParameter]
     public TrainingLogBackup? TrainingLogBackup { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (ExerciseName is not null)
+        {
+            _selectedExerciseName = ExerciseName;
+        }
+        base.OnInitialized();
+    }
 }

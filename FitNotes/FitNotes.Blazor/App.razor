@@ -1,17 +1,19 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <CascadingValue Value="@_trainingLogBackup">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-        </CascadingValue>
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+﻿@inject TrainingLogBackupService TrainingLogBackupService
+
+<CascadingValue Value="@_trainingLogBackup">
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+                <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingValue>
 
 @code {
     public TrainingLogBackup? _trainingLogBackup;
@@ -21,8 +23,8 @@
     {
         if (!_dataIsLoaded)
         {
-                var parsedFile = await BackupParser.ParseFitNotesBackupFile($"Data Source={Directory.GetCurrentDirectory()}/Data/backup.sqlite");
-                _trainingLogBackup = parsedFile;
+                var trainingLogBackup = await TrainingLogBackupService.GetTrainingLogBackupAsync();
+                _trainingLogBackup = trainingLogBackup;
                 _dataIsLoaded = true;
         }
     }

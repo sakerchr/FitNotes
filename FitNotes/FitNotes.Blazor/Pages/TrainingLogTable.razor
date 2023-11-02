@@ -3,14 +3,14 @@
         <tr>
             <th>Date</th>
             <th>Exercise</th>
-            <th>Weigth</th>
+            <th>Weight</th>
             <th>Sets</th>
             <th>Reps</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var trainingLog in TrainingLogBackup.TrainingLogs.OrderByDescending(tl => tl.Date))
+        @foreach (var trainingLog in _logsToDisplay)
         {
             <TrainingLogTableEntry TrainingLog="@trainingLog" />
         }
@@ -19,6 +19,29 @@
 
 
 @code {
-    [CascadingParameter]
-    public TrainingLogBackup? TrainingLogBackup { get; set; }
+    [Parameter]
+    public List<TrainingLog>? TrainingLogs { get; set; }
+    [Parameter]
+    public string? Exercise { get; set; }
+
+    private List<TrainingLog> _logsToDisplay;
+
+    protected override void OnParametersSet()
+    {
+        if (Exercise is not null)
+        {
+            _logsToDisplay = TrainingLogs
+                .Where(tl => string.Equals(tl.Exercise, Exercise))
+                .OrderByDescending(tl => tl.Date)
+                .Take(100)
+                .ToList();
+        } else
+        {
+            _logsToDisplay = TrainingLogs
+                .OrderByDescending(tl => tl.Date)
+                .Take(100)
+                .ToList();
+        }
+        base.OnParametersSet();
+    }
 }

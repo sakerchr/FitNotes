@@ -5,21 +5,17 @@ namespace FitNotes.Blazor.Data
 {
     public class TrainingLogBackupService
     {
-        private readonly ILogger<TrainingLogBackupService> _logger;
-        public TrainingLogBackup? TrainingLogBackup { get; set; }
+        private static readonly string BackupFilePath = $"Data Source={Directory.GetCurrentDirectory()}/Data/backup.sqlite";
+        private TrainingLogBackup? _trainingLogBackup { get; set; }
 
-        public TrainingLogBackupService(ILogger<TrainingLogBackupService> logger) => _logger = logger;
-
-        public async Task DownloadData()
+        public async Task<TrainingLogBackup> GetTrainingLogBackupAsync()
         {
-            try
-            {
-                var parsedFile = await BackupParser.ParseFitNotesBackupFile($"Data Source={Directory.GetCurrentDirectory()}/Data/backup.sqlite");
-            }
-            catch (Microsoft.Data.Sqlite.SqliteException e)
-            {
-                _logger.LogError("Unable to download data");
-            }
+            if (_trainingLogBackup is not null) return _trainingLogBackup;
+            var backup = await DownloadDataAsync();
+            _trainingLogBackup = backup;
+            return backup;
         }
+
+        private static async Task<TrainingLogBackup> DownloadDataAsync() => await BackupParser.ParseFitNotesBackupFile(BackupFilePath);
     }
 }
