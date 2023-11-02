@@ -1,14 +1,13 @@
 @page "/exercise/{exerciseName?}"
 @inject TrainingLogBackupService TrainingLogBackupService
 
-<h1>FitNotes</h1>
-
 <select id="exercise" @bind:get="@_selectedExerciseName" @bind:set="OnSelectedExerciseChanged">
     @foreach (var exercise in TrainingLogBackup.Exercises)
     {
         <option value="@exercise.ExerciseName">@exercise.ExerciseName</option>
     }
 </select>
+
 @if (TrainingLogBackup is null || _selectedExerciseName is null)
 {
     <br />
@@ -16,7 +15,7 @@
 }
 else
 {
-    <TrainingLogTable TrainingLogs="@TrainingLogBackup.TrainingLogs" Exercise="@_selectedExerciseName"/>
+    <TrainingLogTable TrainingLogs="@TrainingLogBackup.TrainingLogs" Exercise="@_selectedExerciseName" />
 }
 
 @code {
