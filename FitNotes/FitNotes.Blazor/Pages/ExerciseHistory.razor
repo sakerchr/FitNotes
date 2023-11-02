@@ -3,13 +3,13 @@
 
 <h1>FitNotes</h1>
 
-<select id="exercise" @bind="@_selectedExerciseName">
+<select id="exercise" @bind:get="@_selectedExerciseName" @bind:set="OnSelectedExerciseChanged">
     @foreach (var exercise in TrainingLogBackup.Exercises)
     {
         <option value="@exercise.ExerciseName">@exercise.ExerciseName</option>
     }
 </select>
-@if (TrainingLogBackup is null || ExerciseName is null)
+@if (TrainingLogBackup is null || _selectedExerciseName is null)
 {
     <br />
     <span>Select an exercise to see logs for that particular exercise</span>
@@ -25,6 +25,11 @@ else
     public string? ExerciseName { get; set; }
     [CascadingParameter]
     public TrainingLogBackup? TrainingLogBackup { get; set; }
+
+    private void OnSelectedExerciseChanged(string value)
+    {
+        _selectedExerciseName = value;
+    }
 
     protected override void OnInitialized()
     {
