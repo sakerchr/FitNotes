@@ -2,34 +2,34 @@
 
 <h1>Sessions</h1>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var trainingSession in _trainingSessionsToDisplay)
-        {
+@if (TrainingLogBackup is null)
+{
+    <span>Loading overview...</span>
+}
+else
+{
+    <TrainingLogTableTemplate TableItems="@_trainingSessionsToDisplay" Context="TrainingSession">
+        <TableHeadTableRow>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </TableHeadTableRow>
+        <TableBodyHeaderTableRow>
             <tr>
                 <td>
-                    @trainingSession.Date
+                    @TrainingSession.Date
                 </td>
                 <td colspan="4">
-                    Total volume: @trainingSession.GetTotalSessionVolume kg
+                    Total volume: @TrainingSession.GetTotalSessionVolume kg
                 </td>
             </tr>
-            foreach (var trainingLog in trainingSession.TrainingLogs)
-            {
-                <TrainingLogTableEntry TrainingLog="@trainingLog" />
-            }
-        }
-    </tbody>
-</table>
+        </TableBodyHeaderTableRow>
+    </TrainingLogTableTemplate>
+}
 
 @code {
     [CascadingParameter]

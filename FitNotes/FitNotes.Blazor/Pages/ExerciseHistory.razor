@@ -17,19 +17,41 @@
 }
 else
 {
-    <TrainingLogTable TrainingLogs="@TrainingLogBackup.TrainingLogs" Exercise="@_selectedExerciseName" />
+    <TrainingLogTableTemplate TableItems="@_datesToTrainingLogs" Context="TrainingLogGrouping">
+        <TableHeadTableRow>
+            <tr>
+                <th>Date</th>
+                <th>Exercise</th>
+                <th>Weight</th>
+                <th>Reps</th>
+                <th></th>
+            </tr>
+        </TableHeadTableRow>
+        <TableBodyHeaderTableRow>
+            <tr>
+                <td colspan="5">
+                    @TrainingLogGrouping.Date
+                </td>
+            </tr>
+        </TableBodyHeaderTableRow>
+    </TrainingLogTableTemplate>
 }
 
 @code {
-    private string? _selectedExerciseName;
     [Parameter]
     public string? ExerciseName { get; set; }
     [CascadingParameter]
     public TrainingLogBackup? TrainingLogBackup { get; set; }
+    private string? _selectedExerciseName;
+    private List<TrainingLogForDayKeyValuePair> _datesToTrainingLogs = new();
 
     private void OnSelectedExerciseChanged(string value)
     {
         _selectedExerciseName = value;
+        if (_selectedExerciseName is not null)
+        {
+            UpdateDatesToTrainingLogs();
+        }
     }
 
     protected override void OnInitialized()
@@ -37,7 +59,25 @@ else
         if (ExerciseName is not null)
         {
             _selectedExerciseName = ExerciseName;
+            UpdateDatesToTrainingLogs();
         }
         base.OnInitialized();
     }
+
+    private void UpdateDatesToTrainingLogs()
+    {
+        _datesToTrainingLogs.Clear();
+        var logGroupings = TrainingLogBackup.TrainingLogs
+        .Where(tl => string.Equals(tl.Exercise, _selectedExerciseName))
+        .GroupBy(tl => tl.Date)
+        .OrderByDescending(tlGrouping => tlGrouping.Key)
+        .Take(50);
+
+        foreach (var logGrouping in logGroupings)
+        {
+            _datesToTrainingLogs.Add(new TrainingLogForDayKeyValuePair(DateOnly.FromDateTime(logGrouping.Key),
+            logGrouping.ToList()));
+        }
+    }
+
 }

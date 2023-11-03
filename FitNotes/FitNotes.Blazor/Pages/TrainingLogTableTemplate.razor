@@ -1,0 +1,28 @@
+@typeparam TItem where TItem : ITrainingLogContainer
+
+<table class="table">
+    <thead>
+        @TableHeadTableRow
+    </thead>
+    <tbody>
+        @foreach (var item in TableItems)
+        {
+            @TableBodyHeaderTableRow(item)
+            foreach (var trainingLog in item.GetTrainingLogs())
+            {
+                <TrainingLogTableEntry TrainingLog="@trainingLog" />
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public RenderFragment? TableHeadTableRow { get; set; }
+    [Parameter]
+    public RenderFragment<TItem>? TableBodyHeaderTableRow { get; set; }
+    [Parameter]
+    public ICollection<TItem>? TableItems { get; set; }
+    [Parameter]
+    public List<TrainingLog>? TrainingLogs { get; set; }
+}

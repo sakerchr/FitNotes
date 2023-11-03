@@ -1,12 +1,27 @@
-@page "/overview"
-
 @if (TrainingLogBackup is null)
 {
     <span>Loading overview...</span>
 }
 else
 {
-    <TrainingLogTable TrainingLogs="@TrainingLogBackup.TrainingLogs"/>
+    <TrainingLogTableTemplate TableItems="@_datesToTrainingLogs" Context="TrainingLogGrouping">
+        <TableHeadTableRow>
+            <tr>
+                <th>Date</th>
+                <th>Exercise</th>
+                <th>Weight</th>
+                <th>Reps</th>
+                <th></th>
+            </tr>
+        </TableHeadTableRow>
+        <TableBodyHeaderTableRow>
+            <tr>
+                <td colspan="5">
+                    @TrainingLogGrouping.Date
+                </td>
+            </tr>
+        </TableBodyHeaderTableRow>
+    </TrainingLogTableTemplate>
 }
 
 
@@ -14,4 +29,20 @@ else
 
     [CascadingParameter]
     public TrainingLogBackup? TrainingLogBackup { get; set; }
+    private List<TrainingLogForDayKeyValuePair> _datesToTrainingLogs = new();
+    protected override void OnParametersSet()
+    {
+        var logGroupings = TrainingLogBackup.TrainingLogs
+        .GroupBy(tl => tl.Date)
+        .OrderByDescending(tlGrouping => tlGrouping.Key)
+        .Take(50);
+
+        foreach (var logGrouping in logGroupings)
+        {
+            _datesToTrainingLogs.Add(new TrainingLogForDayKeyValuePair(DateOnly.FromDateTime(logGrouping.Key),
+            logGrouping.ToList()));
+        }
+
+        base.OnParametersSet();
+    }
 }
