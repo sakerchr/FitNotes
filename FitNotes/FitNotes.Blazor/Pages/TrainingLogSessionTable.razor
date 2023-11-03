@@ -1,0 +1,50 @@
+@page "/sessions"
+
+<h1>Sessions</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var trainingSession in _trainingSessionsToDisplay)
+        {
+            <tr>
+                <td>
+                    @trainingSession.Date
+                </td>
+                <td colspan="4">
+                    Total volume: @trainingSession.GetTotalSessionVolume kg
+                </td>
+            </tr>
+            foreach (var trainingLog in trainingSession.TrainingLogs)
+            {
+                <TrainingLogTableEntry TrainingLog="@trainingLog" />
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    [CascadingParameter]
+    public TrainingLogBackup? TrainingLogBackup { get; set; }
+    private List<TrainingLogSession> _trainingSessionsToDisplay;
+
+    protected override void OnParametersSet()
+    {
+        if (TrainingLogBackup is not null)
+        {
+            _trainingSessionsToDisplay = TrainingLogBackup.TrainingSessions
+            .OrderByDescending(ts => ts.Date)
+            .Take(50)
+            .ToList();
+        }
+        base.OnParametersSet();
+    }
+}

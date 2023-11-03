@@ -1,10 +1,9 @@
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Date</th>
             <th>Exercise</th>
             <th>Weight</th>
-            <th>Sets</th>
             <th>Reps</th>
             <th></th>
         </tr>
@@ -12,7 +11,15 @@
     <tbody>
         @foreach (var trainingLog in _logsToDisplay)
         {
-            <TrainingLogTableEntry TrainingLog="@trainingLog" />
+            <tr>
+                <td colspan="5">
+                    @trainingLog.Key
+                </td>
+            </tr>
+            foreach (var trainingLogEntry in trainingLog.Value)
+            {
+                <TrainingLogTableEntry TrainingLog="@trainingLogEntry" />
+            }
         }
     </tbody>
 </table>
@@ -24,24 +31,26 @@
     [Parameter]
     public string? Exercise { get; set; }
 
-    private List<TrainingLog> _logsToDisplay;
+    private Dictionary<DateOnly, List<TrainingLog>> _logsToDisplay = new();
 
     protected override void OnParametersSet()
     {
+        _logsToDisplay.Clear();
+        IEnumerable<TrainingLog> trainingLogs = TrainingLogs;
         if (Exercise is not null)
         {
-            _logsToDisplay = TrainingLogs
-                .Where(tl => string.Equals(tl.Exercise, Exercise))
-                .OrderByDescending(tl => tl.Date)
-                .Take(100)
-                .ToList();
-        } else
-        {
-            _logsToDisplay = TrainingLogs
-                .OrderByDescending(tl => tl.Date)
-                .Take(100)
-                .ToList();
+            trainingLogs = trainingLogs
+            .Where(tl => string.Equals(tl.Exercise, Exercise));
         }
+        var logGroupings = trainingLogs
+        .GroupBy(tl => tl.Date)
+        .OrderByDescending(tlGrouping => tlGrouping.Key)
+        .Take(100);
+        foreach (var logGrouping in logGroupings)
+        {
+            _logsToDisplay[DateOnly.FromDateTime(logGrouping.Key)] = logGrouping.ToList();
+        }
+
         base.OnParametersSet();
     }
 }

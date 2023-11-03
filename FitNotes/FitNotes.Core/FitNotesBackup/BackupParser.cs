@@ -51,8 +51,20 @@ namespace FitNotes.Core.FitNotesBackup
             trainingLogsBackUp.TrainingLogs = trainingLogs;
             trainingLogsBackUp.Exercises = exercises.ToList();
             trainingLogsBackUp.Categories = categories.ToList();
+            trainingLogsBackUp.TrainingSessions = GroupTrainingLogSessionsFromTrainingLogs(trainingLogs);
 
             return trainingLogsBackUp;
         }
+
+        private static List<TrainingLogSession> GroupTrainingLogSessionsFromTrainingLogs(List<TrainingLog> trainingLogs) => trainingLogs
+            .GroupBy(tl => DateOnly.FromDateTime(tl.Date))
+            .Select(trainingLogsGroupedByDate =>
+                new TrainingLogSession
+                {
+                    Date = trainingLogsGroupedByDate.Key,
+                    TrainingLogs = trainingLogsGroupedByDate.ToList()
+                }
+            )
+            .ToList();
     }
 }

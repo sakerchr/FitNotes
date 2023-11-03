@@ -3,7 +3,8 @@
     public class TrainingLogBackup
     {
         public List<TrainingLog> TrainingLogs { get; set; }
-        public List<Exercise> Exercises { get; set;}
-        public List<Category> Categories { get; set;}
+        public List<Exercise> Exercises { get; set; }
+        public List<Category> Categories { get; set; }
+        public List<TrainingLogSession> TrainingSessions { get; set; }
     }
 }
