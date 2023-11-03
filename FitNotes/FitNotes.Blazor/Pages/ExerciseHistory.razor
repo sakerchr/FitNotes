@@ -1,40 +1,46 @@
 @page "/exercise/{exerciseName?}"
-@inject TrainingLogBackupService TrainingLogBackupService
 
 <h1>Exercise</h1>
 
-<select id="exercise" @bind:get="@_selectedExerciseName" @bind:set="OnSelectedExerciseChanged">
-    @foreach (var exercise in TrainingLogBackup.Exercises)
-    {
-        <option value="@exercise.ExerciseName">@exercise.ExerciseName</option>
-    }
-</select>
-
-@if (TrainingLogBackup is null || _selectedExerciseName is null)
+@if (TrainingLogBackup is null)
 {
-    <br />
-    <span>Select an exercise to see logs for that particular exercise</span>
+    <span>Loading overview...</span>
 }
 else
 {
-    <TrainingLogTableTemplate TableItems="@_datesToTrainingLogs" Context="TrainingLogGrouping">
-        <TableHeadTableRow>
-            <tr>
-                <th>Date</th>
-                <th>Exercise</th>
-                <th>Weight</th>
-                <th>Reps</th>
-                <th></th>
-            </tr>
-        </TableHeadTableRow>
-        <TableBodyHeaderTableRow>
-            <tr>
-                <td colspan="5">
-                    @TrainingLogGrouping.Date
-                </td>
-            </tr>
-        </TableBodyHeaderTableRow>
-    </TrainingLogTableTemplate>
+    <select id="exercise" @bind:get="@_selectedExerciseName" @bind:set="OnSelectedExerciseChanged">
+        @foreach (var exercise in TrainingLogBackup.Exercises)
+        {
+            <option value="@exercise.ExerciseName">@exercise.ExerciseName</option>
+        }
+    </select>
+
+    @if (_selectedExerciseName is null)
+    {
+        <br />
+        <span>Select an exercise to see logs for that particular exercise</span>
+    }
+    else
+    {
+        <TrainingLogTableTemplate TableItems="@_datesToTrainingLogs" Context="TrainingLogGrouping">
+            <TableHeadTableRow>
+                <tr>
+                    <th>Date</th>
+                    <th>Exercise</th>
+                    <th>Weight</th>
+                    <th>Reps</th>
+                    <th></th>
+                </tr>
+            </TableHeadTableRow>
+            <TableBodyHeaderTableRow>
+                <tr>
+                    <td colspan="5">
+                        @TrainingLogGrouping.Date
+                    </td>
+                </tr>
+            </TableBodyHeaderTableRow>
+        </TrainingLogTableTemplate>
+    }
 }
 
 @code {
@@ -48,10 +54,7 @@ else
     private void OnSelectedExerciseChanged(string value)
     {
         _selectedExerciseName = value;
-        if (_selectedExerciseName is not null)
-        {
-            UpdateDatesToTrainingLogs();
-        }
+        UpdateDatesToTrainingLogs();
     }
 
     protected override void OnInitialized()
@@ -67,6 +70,7 @@ else
     private void UpdateDatesToTrainingLogs()
     {
         _datesToTrainingLogs.Clear();
+
         var logGroupings = TrainingLogBackup.TrainingLogs
         .Where(tl => string.Equals(tl.Exercise, _selectedExerciseName))
         .GroupBy(tl => tl.Date)
