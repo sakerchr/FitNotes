@@ -4,7 +4,10 @@
     <td>@TrainingLog.MetricWeight</td>
     <td>@TrainingLog.Reps</td>
     <td>
-        <a href="exercise/@TrainingLog.Exercise">See history</a>
+        @if (IncludeHistory)
+        {
+            <a href="exercise/@TrainingLog.Exercise">See history</a>
+        }
     </td>
 </tr>
 
@@ -12,4 +15,6 @@
 @code {
     [Parameter]
     public TrainingLog TrainingLog { get; set; }
+    [Parameter]
+    public bool IncludeHistory { get; set; } = true;
 }

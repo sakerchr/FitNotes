@@ -1,5 +1,6 @@
 using FitNotes.Core.FitNotesBackup;
 using FitNotes.Core.Models;
+using Microsoft.VisualBasic;
 
 namespace FitNotes.Blazor.Data
 {
@@ -21,5 +22,19 @@ namespace FitNotes.Blazor.Data
         }
 
         private static async Task<TrainingLogBackup> DownloadDataAsync() => await BackupParser.ParseFitNotesBackupFile(BackupFilePath);
+        public bool TryGetTrainingLogSession(DateOnly date, out TrainingLogSession? trainingLogSession)
+        {
+            trainingLogSession = null;
+            if (_trainingLogBackup is not null)
+            {
+                var session = _trainingLogBackup.TrainingSessions.FirstOrDefault(ts => ts.Date == date);
+                if (session is not null)
+                {
+                    trainingLogSession = session;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

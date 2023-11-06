@@ -1,0 +1,54 @@
+@page "/detail"
+@using FitNotes.Blazor.Pages.TableTemplate
+@inject TrainingLogBackupService TrainingLogBackupService
+
+<h2>Session detail</h2>
+
+<InputDate Type="@InputDateType.Date" @bind-Value="_sessionDate" @onchange="DateSelectionChanged"
+    @oninput="DateSelectionChanged"></InputDate>
+
+@if (TrainingSession is not null)
+{
+    <div class="card">
+        <div class="card-header">
+            Session @TrainingSession.Date with total volume @TrainingSession.GetTotalSessionVolume kg
+        </div>
+        <table class="table">
+            <thead>
+                <td></td>
+                <td>Exercise</td>
+                <td>Weight</td>
+                <td>Reps</td>
+            </thead>
+            <tbody>
+                @foreach (var log in TrainingSession.TrainingLogs)
+                {
+                    <TrainingLogTableEntry TrainingLog="log" IncludeHistory="false" />
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div>No session found for the selected date</div>
+}
+
+
+@code {
+    [Parameter]
+    public TrainingLogSession? TrainingSession { get; set; }
+    private DateOnly _sessionDate = DateOnly.FromDateTime(DateTime.UtcNow);
+    private void DateSelectionChanged()
+    {
+        if (TrainingLogBackupService.TryGetTrainingLogSession(_sessionDate, out var session))
+        {
+            TrainingSession = session;
+        }
+        else
+        {
+            TrainingSession = null;
+        }
+        StateHasChanged();
+    }
+}
