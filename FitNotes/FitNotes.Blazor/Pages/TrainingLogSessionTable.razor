@@ -21,9 +21,7 @@ else
         </TableHeadTableRow>
         <TableBodyHeaderTableRow>
             <tr>
-                <td>
-                    @TrainingSession.Date
-                </td>
+                <SessionDetailNavLink Colspan="1" SessionDate="@TrainingSession.Date"></SessionDetailNavLink>
                 <td colspan="4">
                     Total volume: @TrainingSession.GetTotalSessionVolume kg
                 </td>

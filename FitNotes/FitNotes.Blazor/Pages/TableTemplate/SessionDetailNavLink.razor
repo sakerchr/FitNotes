@@ -1,0 +1,12 @@
+<td colspan="@Colspan">
+    <NavLink href=@($"/detail/{SessionDate.ToString("yyyy-MM-dd")}")>
+        @SessionDate
+    </NavLink>
+</td>
+
+@code {
+    [Parameter]
+    public int Colspan { get; set; }
+    [Parameter]
+    public DateOnly SessionDate { get; set; }
+}

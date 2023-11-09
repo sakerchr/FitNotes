@@ -1,11 +1,10 @@
-@page "/detail"
+@page "/detail/{sessionDate:datetime?}"
 @using FitNotes.Blazor.Pages.TableTemplate
 @inject TrainingLogBackupService TrainingLogBackupService
 
 <h2>Session detail</h2>
 
-<InputDate Type="@InputDateType.Date" @bind-Value="_sessionDate" @onchange="DateSelectionChanged"
-    @oninput="DateSelectionChanged"></InputDate>
+<InputDate Type="@InputDateType.Date" @bind-Value="SessionDate" @bind-Value:after="DateSelectionChanged"></InputDate>
 
 @if (TrainingSession is not null)
 {
@@ -34,21 +33,37 @@ else
     <div>No session found for the selected date</div>
 }
 
-
 @code {
+
+    [Parameter]
+    public DateTime? SessionDate { get; set; } = DateTime.UtcNow;
     [Parameter]
     public TrainingLogSession? TrainingSession { get; set; }
-    private DateOnly _sessionDate = DateOnly.FromDateTime(DateTime.UtcNow);
+
+    protected override void OnInitialized()
+    {
+        SetSessionIfThereIsOneForDate();
+        base.OnInitialized();
+    }
+
+    private void SetSessionIfThereIsOneForDate()
+    {
+        if (SessionDate is not null)
+        {
+            if (TrainingLogBackupService.TryGetTrainingLogSession(DateOnly.FromDateTime(SessionDate.Value), out var session))
+            {
+                TrainingSession = session;
+            }
+            else
+            {
+                TrainingSession = null;
+            }
+        }
+    }
+
     private void DateSelectionChanged()
     {
-        if (TrainingLogBackupService.TryGetTrainingLogSession(_sessionDate, out var session))
-        {
-            TrainingSession = session;
-        }
-        else
-        {
-            TrainingSession = null;
-        }
+        SetSessionIfThereIsOneForDate();
         StateHasChanged();
     }
 }
