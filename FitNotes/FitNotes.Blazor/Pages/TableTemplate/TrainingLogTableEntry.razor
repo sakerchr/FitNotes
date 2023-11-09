@@ -3,12 +3,12 @@
     <td>@TrainingLog.Exercise</td>
     <td>@TrainingLog.MetricWeight</td>
     <td>@TrainingLog.Reps</td>
-    <td>
-        @if (IncludeHistory)
-        {
-            <a href="exercise/@TrainingLog.Exercise">See history</a>
-        }
-    </td>
+    @if (IncludeHistory)
+    {
+        <td>
+            <NavLink href=@($"exercise/{TrainingLog.Exercise}")>See history</NavLink>
+        </td>
+    }
 </tr>
 
 

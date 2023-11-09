@@ -10,7 +10,7 @@
             @TableBodyHeaderTableRow(item)
             foreach (var trainingLog in item.GetTrainingLogs())
             {
-                <TrainingLogTableEntry TrainingLog="@trainingLog" />
+                <TrainingLogTableEntry TrainingLog="@trainingLog" IncludeHistory="@IncludeHistoryLinkForEntries" />
             }
         }
     </tbody>
@@ -26,4 +26,6 @@
     public ICollection<TItem>? TableItems { get; set; }
     [Parameter]
     public List<TrainingLog>? TrainingLogs { get; set; }
+    [Parameter]
+    public bool IncludeHistoryLinkForEntries { get; set; } = true;
 }

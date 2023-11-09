@@ -18,11 +18,12 @@
                 <td>Exercise</td>
                 <td>Weight</td>
                 <td>Reps</td>
+                <td></td>
             </thead>
             <tbody>
                 @foreach (var log in TrainingSession.TrainingLogs)
                 {
-                    <TrainingLogTableEntry TrainingLog="log" IncludeHistory="false" />
+                    <TrainingLogTableEntry TrainingLog="log" />
                 }
             </tbody>
         </table>
