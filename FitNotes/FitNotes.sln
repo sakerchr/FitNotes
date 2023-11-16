@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tester", "Tester\Tester.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FitNotes.Functions", "FitNotes.Functions\FitNotes.Functions.csproj", "{28D7976D-16D6-4F1E-8811-F1474F60C74A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitNotes.Blazor", "FitNotes.Blazor\FitNotes.Blazor.csproj", "{932E3A51-C0DA-4155-97EE-EB20A07FCDBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FitNotes.Blazor", "FitNotes.Blazor\FitNotes.Blazor.csproj", "{932E3A51-C0DA-4155-97EE-EB20A07FCDBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

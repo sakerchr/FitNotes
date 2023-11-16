@@ -6,22 +6,21 @@ using Azure.Identity;
 using Azure.Storage.Blobs;
 using FitNotes.Core.FitNotesBackup;
 using FitNotes.Core.Models;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
 
 namespace FitNotes.Functions
 {
     public class BackupUploaded
     {
-        [FunctionName(nameof(BackupUploaded))]
+        [Function(nameof(BackupUploaded))]
         public async Task Run([BlobTrigger("fitnotesbackups/{name}", Connection = "StorageAccountConnectionString")]Stream myBlob, string name, Uri uri, ILogger log, [DurableClient] IDurableOrchestrationClient client)
         {
             log.LogInformation("Initiating download, parsing and upload of backup stored in blob {FileName} to Table storage", name);
             var instanceId = await client.StartNewAsync(nameof(ProcessTrainingLogBackup), new BackupUploadedPayload(uri, "fitnoteswithtables", "fitnoteswithtables", name));
         }
 
-        [FunctionName(nameof(ProcessTrainingLogBackup))]
+        [Function(nameof(ProcessTrainingLogBackup))]
         public async Task ProcessTrainingLogBackup([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
         {
             var payload = context.GetInput<BackupUploadedPayload>();
@@ -31,7 +30,7 @@ namespace FitNotes.Functions
             log.LogInformation("Successfully downloaded, parsed and uploaded training log backup stored in blob {FileName}", payload.BlobName);
         }
 
-        [FunctionName(nameof(UploadBackupToTableStorage))]
+        [Function(nameof(UploadBackupToTableStorage))]
         public async Task UploadBackupToTableStorage([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
         {
             var payload = context.GetInput<UploadBackupToTableStoragePayload>();
@@ -46,7 +45,7 @@ namespace FitNotes.Functions
             log.LogInformation("Successfully uploaded {NumberOfTrainingLogs} training logs to Table storage", payload.TrainingLogBackup.TrainingLogs.Count);
         }
 
-        [FunctionName(nameof(DownloadAndParseBackupFromStream))]
+        [Function(nameof(DownloadAndParseBackupFromStream))]
         public async Task<TrainingLogBackup> DownloadAndParseBackupFromStream([ActivityTrigger] BackupUploadedPayload payload, ILogger log)
         {
             log.LogInformation("Downloading and parsing blob {FileName}", payload.BlobName);
@@ -65,15 +64,15 @@ namespace FitNotes.Functions
             return parsedBackup;
         }
 
-        [FunctionName(nameof(UploadBackupTrainingLogsToTableStorage))]
+        [Function(nameof(UploadBackupTrainingLogsToTableStorage))]
         public async Task UploadBackupTrainingLogsToTableStorage([ActivityTrigger] BackupTrainingLogsPayload payload) => 
             await BackupUploader.InsertTrainingLogs(payload.StorageAccount, payload.Table, payload.TrainingLogs, new DefaultAzureCredential());
 
-        [FunctionName(nameof(UploadBackupExercisesToTableStorage))]
+        [Function(nameof(UploadBackupExercisesToTableStorage))]
         public async Task UploadBackupExercisesToTableStorage([ActivityTrigger] BackupExercisesPayload payload) => 
             await BackupUploader.InsertExercises(payload.StorageAccount, payload.Table, payload.Exercises, new DefaultAzureCredential());
 
-        [FunctionName(nameof(UploadBackupCategoriesToTableStorage))]
+        [Function(nameof(UploadBackupCategoriesToTableStorage))]
         public async Task UploadBackupCategoriesToTableStorage([ActivityTrigger] BackupCategoriesPayload payload) =>
             await BackupUploader.InsertExerciseCategories(payload.StorageAccount, payload.Table, payload.Categories, new DefaultAzureCredential());
 
